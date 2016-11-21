@@ -24,10 +24,10 @@ public class JokeServer {
 
 			int number = 0;                                                                  // Deklarieren nötigen Variablen, Strings etc.
 			
-			String[] witz = {"US Wahlen 2016", "Vor einem Jahr habe ich einen Boomerang geworfen. Seitdem lebe in staendiger Furcht.", "Nice", "vierter Witz"};
+			String[] witz = {"US Wahlen 2016", "Vor einem Jahr habe ich einen Boomerang geworfen. Seitdem lebe in staendiger Furcht.", "Nice _", "vierter Witz"};
 			String[] spruch = {"Rush B", "Drei", "dritter Spruch", "vierter Spruch"};
 			String[] splitted_Array;
-			String client_name;
+			String client_name = null;
 			String sentence = "nixe";
 
 			Scanner inFromClient = new Scanner(socket.getInputStream());                     // ScannerObjekt anlegen, um Input vom Client erhalten zu können
@@ -51,8 +51,10 @@ public class JokeServer {
 					          System.out.printf("Gesendet: Answer 2 / \r\n%s\r\n", witz[1]);
 					          break;
 					          
-					case "3": outToClient.printf("Answer 3 / \r\n%s\r\n", witz[2]);
-					          System.out.printf("Gesendet: Answer 3 / \r\n%s\r\n", witz[2]);
+					case "3": String anpasser = witz[2].replace("_", client_name);           // Ersetzen des _ mit den client_name
+						
+						      outToClient.printf("Answer 3 / \r\n%s\r\n", anpasser);
+					          System.out.printf("Gesendet: Answer 3 / \r\n%s\r\n", anpasser);
 					          break;
 					          
 					case "4": outToClient.printf("Answer 4 / \r\n%s\r\n", witz[3]);

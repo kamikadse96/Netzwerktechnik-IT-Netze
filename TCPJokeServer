@@ -1,0 +1,125 @@
+package sockets;
+
+import java.io.*;
+import java.net.*;
+import java.util.*;
+
+public class JokeServer {
+
+		public static void main(String args[]) throws Exception {
+
+			System.out.printf("Server gestartet\n");
+			ServerSocket serverSocket = new ServerSocket(6666);
+
+			while(true){
+
+				Socket socket = serverSocket.accept();
+				System.out.printf("Neue Verbindung hergestellt.\n");
+				protocol(socket);
+
+			}
+		}
+
+		public static void protocol(Socket socket) throws Exception {
+
+			int number = 0;                                                                  // Deklarieren nötigen Variablen, Strings etc.
+			
+			String[] witz = {"US Wahlen 2016", "Vor einem Jahr habe ich einen Boomerang geworfen. Seitdem lebe in staendiger Furcht.", "Nice", "vierter Witz"};
+			String[] spruch = {"Rush B", "Drei", "dritter Spruch", "vierter Spruch"};
+			String[] splitted_Array;
+			String client_name;
+			String sentence = "nixe";
+
+			Scanner inFromClient = new Scanner(socket.getInputStream());                     // ScannerObjekt anlegen, um Input vom Client erhalten zu können
+			PrintStream outToClient = new PrintStream(socket.getOutputStream());             // PrintObjekt anlegen, um Output an Client zu schicken
+			
+			
+			while(!sentence.contains("Bye")){                                                // Beliebig viele Witze/Sprüche anfordern -> while
+
+				sentence = inFromClient.nextLine();
+				splitted_Array = sentence.split(" ");
+				System.out.printf("Empfangen: %s\n", sentence);
+
+				if(sentence.contains("Witz")){                                               // Witze, Auswahl mittels switch-case
+					
+					switch(splitted_Array[1]){
+					case "1": outToClient.printf("Answer 1 / \r\n%s\r\n", witz[0]);
+					          System.out.printf("Gesendet: Answer 1 / \r\n%s\r\n", witz[0]);
+					          break;
+					          
+					case "2": outToClient.printf("Answer 2 / \r\n%s\r\n", witz[1]);
+					          System.out.printf("Gesendet: Answer 2 / \r\n%s\r\n", witz[1]);
+					          break;
+					          
+					case "3": outToClient.printf("Answer 3 / \r\n%s\r\n", witz[2]);
+					          System.out.printf("Gesendet: Answer 3 / \r\n%s\r\n", witz[2]);
+					          break;
+					          
+					case "4": outToClient.printf("Answer 4 / \r\n%s\r\n", witz[3]);
+					          System.out.printf("Gesendet: Answer 4 / \r\n%s\r\n", witz[3]);
+					          break;
+					          
+					default:  outToClient.printf("Error: invalid number.\r\n)");
+					          System.out.printf("Gesendet: Error: invalid number.\n");
+					          break;
+					}
+				}
+
+				else if (sentence.contains("Spruch")){                                       // Sprüche, Auswahl mittels switch-case
+				
+					switch(splitted_Array[1]){
+					case "1": outToClient.printf("Answer 1 / \r\n%s\r\n", spruch[0]);
+			                  System.out.printf("Gesendet: Answer 1 / \r\n%s\r\n", spruch[0]);
+			                  break;
+			                  
+					case "2": outToClient.printf("Answer 2 / \r\n%s\r\n", spruch[1]);
+			                  System.out.printf("Gesendet: Answer 2 / \r\n%s\r\n", spruch[1]);
+			                  break;
+			                  
+					case "3": outToClient.printf("Answer 3 / \r\n%s\r\n", spruch[2]);
+			                  System.out.printf("Gesendet: Answer 3 / \r\n%s\r\n", spruch[2]);
+			                  break;
+			                  
+					case "4": outToClient.printf("Answer 4 / \r\n%s\r\n", spruch[3]);
+			                  System.out.printf("Gesendet: Answer 4 / \r\n%s\r\n", spruch[3]);
+			                  break;
+			                  
+			        default:  outToClient.printf("Error: invalid number.\r\n)");
+			                  System.out.printf("Gesendet: Error: invalid number.\n");
+			                  break;
+					} 
+				}
+
+				else if(sentence.contains("Sdt")){                                            // Spruch des Tages
+					 
+					outToClient.printf("Sdt 1 / \r\nUnser Spruch des Tages veraendert sich nicht jeden Tag lol.\r\n");
+					System.out.printf("Gesendet: Sdt 1 / \r\nUnser Spruch des Tages veraendert sich nicht jeden Tag lol.\n");
+				}
+
+				else if(sentence.contains("Bye")) {                                           // Bye
+					
+					outToClient.printf("WIEDERSEHEN: Bis zum nächsten Mal. (Server)\r\n");
+					System.out.printf("Gesendet: WIEDERSEHEN: Bis zum nächsten Mal. (Server)\n");
+
+					outToClient.close();
+					inFromClient.close();
+					socket.close();
+				}
+				
+				else if(sentence.contains("Hello")){                                          // Hello
+					 
+					client_name = splitted_Array[2];
+					outToClient.printf("HALLO: Ja Hallo %s! Nummerierung der Witze/Sprueche von 1-4\r\n", client_name);
+					System.out.printf("Gesendet: HALLO: Ja Hallo %s! Nummerierung der Witze/Sprüche von 1-4.\n", client_name);
+				}
+				
+				else {                                                                        // Ungültige Eingabe
+					
+					client_name = splitted_Array[2];
+					outToClient.printf("Error: Ungueltige Eingabe.\r\n");
+					System.out.printf("Gesendet: Ungueltige Eingabe.\n");
+				}
+
+			}
+		}
+}

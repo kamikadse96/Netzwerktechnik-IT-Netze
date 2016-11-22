@@ -1,7 +1,3 @@
-//                                          WICHTIG!
-/* Antwort vom Server gibt noch die falsche Nummer an den Client. Jeder Witz braucht eine anzahl von Zeilen. */
-
-
 package sockets;
 
 import java.io.*;
@@ -26,17 +22,21 @@ public class JokeServer {
 
 		public static void protocol(Socket socket) throws Exception {
 
-			String[] witz = {"US Wahlen 2016", "Vor einem Jahr habe ich einen Boomerang geworfen.\r\nSeitdem lebe in staendiger Furcht.", "_ traegt Oma-unterwaesche.", "Chuck Norris verwählt sich nicht.\n\r Wenn du abhebst, warst du am falschen Telefon."};
+			String[] witz =   {"US Wahlen 2016", "Vor einem Jahr habe ich einen Boomerang geworfen.\r\nSeitdem lebe in staendiger Furcht.",
+					           "_ traegt Oma-unterwaesche.", "Chuck Norris verwaehlt sich nicht.\n\rWenn du abhebst, warst du am falschen Telefon."};
 			
 			String[] spruch = {"Rush B", "Wer naemlich mit h schreibt ist daemlich", 
 					           "Alkohol ist ein hervorragendes Loesungsmittel.\r\nEs loest Familien, Freundschaften, Arbeitsverhaeltnisse,\r\nBankkonten, Leber und Hirnzellen auf.\r\nEs loest nur keine Probleme.", 
 					           "Heute ist das morgen von gestern."};
 			
+			String[] witz_zeilenanz =   {"1", "2", "1", "2"};                                                                                   // Anzahl der Zeilen des jeweiligen Witzes
+			String[] spruch_zeilenanz = {"1", "1", "4", "1"};                                                                                   // Anzahl der Zeilen des jeweiligen Spruches
+			
 			String[] splitted_Array;                                                                                                            // aufgeteilter String (ursprünglich vom Client)
 			String client_name = null;                                                                                                          // client_name kommt von Hello-Methode
 			String sentence = "nichts";                                                                                                         // Input vom Client wird hier gespeichert
 			int number;                                                                                                                         // siehe Protokoll; vom Client: number ist Nr. des Witzes/Spruches, bei anderen Methoden 0
-			                                                                                                                                    //                  vom Server: hat Answer Methode einen Body, ist number Zeilenanzahl
+			                                                                                                                                    //                  vom Server: witz_zeilenanz und spruch_zeilenanz benutzen
 
 			Scanner inFromClient = new Scanner(socket.getInputStream());                                                                        // ScannerObjekt anlegen, um Input vom Client erhalten zu können
 			PrintStream outToClient = new PrintStream(socket.getOutputStream());                                                                // PrintObjekt anlegen, um Output an Client zu schicken
@@ -55,8 +55,8 @@ public class JokeServer {
 					number = Integer.parseInt(splitted_Array[1]) - 1;                                                                           // Konvertierung der Nummer (original String) in Integer
 					
 					if(number < 4 && number > -1){                                                                                              // nur Witze von 1-4 verfügbar
-					    outToClient.printf("Answer %s /\r\n%s\r\n", splitted_Array[1], witz[number].replaceAll("_", client_name));              // replace ersetzt die _ im String mit client_name
-					    System.out.printf("Gesendet: Answer %s /\r\n%s\r\n", splitted_Array[1], witz[number].replaceAll("_", client_name));
+					    outToClient.printf("Answer %s /\r\n%s\r\n", witz_zeilenanz[number], witz[number].replaceAll("_", client_name));         // replace ersetzt die _ im String mit client_name
+					    System.out.printf("Gesendet: Answer %s /\r\n%s\r\n", witz_zeilenanz[number], witz[number].replaceAll("_", client_name));
 					}
 					
 					else {                                                                                                                      // bei ungültiger Nummer
@@ -97,8 +97,8 @@ public class JokeServer {
 					number = Integer.parseInt(splitted_Array[1]) - 1;
 					
 					if(number < 4 && number > -1){
-						outToClient.printf("Answer %s / \r\n%s\r\n", splitted_Array[1], spruch[number].replaceAll("_", client_name));
-						System.out.printf("Gesendet: Answer %s / \r\n%s\r\n", splitted_Array[1], spruch[number].replaceAll("_", client_name));
+						outToClient.printf("Answer %s / \r\n%s\r\n", spruch_zeilenanz[number], spruch[number].replaceAll("_", client_name));
+						System.out.printf("Gesendet: Answer %s / \r\n%s\r\n", spruch_zeilenanz[number], spruch[number].replaceAll("_", client_name));
 					}
 					
 					else{
